@@ -25,7 +25,6 @@ public class adapter extends ArrayAdapter<rowitem> {
         this.context = context;
         this.resource = resource;
         this.list = list;
-
     }
 
     @NonNull
@@ -38,42 +37,6 @@ public class adapter extends ArrayAdapter<rowitem> {
         rowitem rowitem = list.get(position);
         textView.setText(rowitem.getName());
         imageView.setImageDrawable(context.getResources().getDrawable(rowitem.getImage()));
-
-        view.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeitem(position);
-            }
-        });
-
-
         return view;
-    }
-
-    private void removeitem(final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Do you want to delete?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    list.remove(position);
-                    notifyDataSetChanged();
-
-                } catch (Exception e) {
-
-                }
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-
-
     }
 }
