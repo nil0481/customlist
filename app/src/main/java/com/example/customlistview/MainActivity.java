@@ -1,5 +1,6 @@
 package com.example.customlistview;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +18,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     List<rowitem> list;
     ListView listView;
-
-    //ListAdapter myadapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         list.add(new rowitem(R.drawable.download3, "third"));
         list.add(new rowitem(R.drawable.dnd4, "fourth"));
         list.add(new rowitem(R.drawable.dnd5, "fifth"));
-
-        adapter myadapter = new adapter(this, R.layout.customview, list);
+        //list.remove(0);
+        final adapter myadapter = new adapter(this, R.layout.customview, list);
         ListView listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myadapter);
 
@@ -39,44 +38,37 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         String item = String.valueOf(parent.getItemAtPosition(position));
-                        Toast.makeText(MainActivity.this, item + " selected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, position + " selected", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
+
         listView.setOnItemLongClickListener(
                 new AdapterView.OnItemLongClickListener() {
                     @Override
-                    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                        removeitem(position);
-                        return true;
+                    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setTitle("Do you want to delete?");
+                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                list.remove(position);
+                                myadapter.notifyDataSetChanged();
+                                Toast.makeText(MainActivity.this,"Item deleted successfully",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        return false;
                     }
                 }
         );
     }
-
-        private void removeitem ( final int position){
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Do you want to delete?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    try {
-                        list.remove(position);
-
-                    } catch (Exception e) {
-
-                    }
-                }
-            });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        }
-    }
+}
 
 
